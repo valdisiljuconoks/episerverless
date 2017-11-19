@@ -35,7 +35,7 @@ namespace FunctionApp
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
                 // Request parameters
-                var uri = "https://westeurope.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/ProcessImage/Evaluate";
+                var uri = ConfigurationManager.AppSettings["cognitive-services-approval-uri"];
 
                 using (var ms = new MemoryStream())
                 {
@@ -56,6 +56,7 @@ namespace FunctionApp
 
                         if(resultAsObject.IsImageAdultClassified)
                         {
+                            log.Warning("(Fun4) Inappropriate content detected. Sending notification...");
                             return request.AsQueueItem();
                         }
                     }
