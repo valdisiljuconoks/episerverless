@@ -4,10 +4,11 @@
   </PropertyGroup>
   <ItemGroup>    
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="2.1.0-beta4" />    
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Twilio" Version="1.1.0-beta4" />    
     <PackageReference Include="Microsoft.Azure.WebJobs.ServiceBus" Version="2.1.0-beta4" />    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />    
     <PackageReference Include="Microsoft.ProjectOxford.Vision" Version="1.0.393" />    
-    <PackageReference Include="Twilio" Version="5.7.2" />
+    <PackageReference Include="Twilio" Version="4.7.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared.Models\Shared.Models.csproj" />
