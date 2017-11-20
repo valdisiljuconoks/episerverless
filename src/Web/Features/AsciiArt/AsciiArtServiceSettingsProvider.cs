@@ -2,11 +2,10 @@
 using System.Configuration;
 using Newtonsoft.Json;
 using Shared.Models;
-using Web1.Business;
 
 namespace Web1.Features.AsciiArt
 {
-    class AsciiArtServiceSettingsProvider : IAsciiArtServiceSettingsProvider
+    internal class AsciiArtServiceSettingsProvider : IAsciiArtServiceSettingsProvider
     {
         private readonly Lazy<SettingsMessage> _cachedInstance = new Lazy<SettingsMessage>(GetSettings);
 
@@ -14,8 +13,12 @@ namespace Web1.Features.AsciiArt
 
         private static SettingsMessage GetSettings()
         {
-            var response = AsyncHelper.RunSync(() => Global.HttpClient.Value.GetAsync(ConfigurationManager.AppSettings["func:SettingsUri"]));
-            var result = JsonConvert.DeserializeObject<SettingsMessage>(AsyncHelper.RunSync(() => response.Content.ReadAsStringAsync()));
+            var response = AsyncHelper.RunSync(() =>
+                Global.HttpClient.Value.GetAsync(ConfigurationManager.AppSettings["func:SettingsUri"]));
+
+            var result =
+                JsonConvert.DeserializeObject<SettingsMessage>(AsyncHelper.RunSync(() =>
+                    response.Content.ReadAsStringAsync()));
 
             // TODO: inject settings from web.config differently
             result.RequestFunctionUri = ConfigurationManager.AppSettings["func:RequestAsciiUri"];

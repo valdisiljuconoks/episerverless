@@ -20,15 +20,17 @@ namespace FunctionApp
         [FunctionName("Function4")]
         [return: Queue("to-admin-notif")]
         public static async Task<CloudQueueMessage> Run(
-            [ServiceBusTrigger("mytopic", "to-eval", AccessRights.Manage)]       AnalysisReq request,
-            [Blob("%input-container%/{BlobRef}", FileAccess.Read)]               Stream inBlob,
-            TraceWriter                                                          log)
+            [ServiceBusTrigger("mytopic", "to-eval", AccessRights.Manage)]   AnalysisReq request,
+            [Blob("%input-container%/{BlobRef}", FileAccess.Read)]           Stream inBlob,
+            TraceWriter                                                      log)
         {
             log.Info("(Fun4) Running image approval analysis...");
 
             try
             {
-                var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-approval-key"];
+                var subscriptionKey =
+                    ConfigurationManager.AppSettings["cognitive-services-approval-key"];
+
                 var client = new HttpClient();
 
                 // Request headers

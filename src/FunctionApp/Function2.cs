@@ -16,7 +16,7 @@ namespace FunctionApp
     public static class Function2
     {
         [FunctionName("Function2")]
-        [return: Queue("to-ascii-convertion")]
+        [return: Queue("to-ascii-conversion")]
         public static async Task<CloudQueueMessage> Run(
             [ServiceBusTrigger("mytopic", "to-ascii", AccessRights.Manage)]        AnalysisReq request,
             [Blob("%input-container%/{BlobRef}", FileAccess.Read)]                 Stream inBlob,

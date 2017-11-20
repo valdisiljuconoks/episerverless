@@ -19,7 +19,7 @@ namespace FunctionApp
         [return: Queue("done-images")]
         public static async Task<CloudQueueMessage> Run(
 
-            [QueueTrigger("to-ascii-convertion")]                        AsciiArtRequest request,
+            [QueueTrigger("to-ascii-conversion")]                        AsciiArtRequest request,
             [Blob("%input-container%/{BlobRef}", FileAccess.Read)]       Stream inBlob,
             [Blob("%output-container%/{BlobRef}", FileAccess.Write)]     Stream outBlob,
                                                                          TraceWriter log)

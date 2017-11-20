@@ -20,7 +20,9 @@ namespace Web1.Features.AsciiArt.Upload
             AsyncHelper.RunSync(() => CallFunctionAsync(fileId, bytes, imageUrl));
         }
 
-        private async Task<string> CallFunctionAsync(string contentReference, byte[] byteData, string imageUrl)
+        private async Task<string> CallFunctionAsync(string contentReference,
+            byte[] byteData,
+            string imageUrl)
         {
             var req = new ProcessingRequest
             {
@@ -33,9 +35,13 @@ namespace Web1.Features.AsciiArt.Upload
             using (var content = new StringContent(JsonConvert.SerializeObject(req)))
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await Global.HttpClient.Value.PostAsync(_settings.Settings.RequestFunctionUri, content)
-                    .ConfigureAwait(false);
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var response = await
+                    Global.HttpClient.Value.PostAsync(
+                        _settings.Settings.RequestFunctionUri,
+                        content).ConfigureAwait(false);
+
+                return await response.Content.ReadAsStringAsync()
+                                             .ConfigureAwait(false);
             }
         }
     }

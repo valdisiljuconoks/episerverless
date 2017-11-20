@@ -21,14 +21,17 @@ namespace FunctionApp
             var accountSid = ConfigurationManager.AppSettings["twilio-account-sid"];
             var authToken = ConfigurationManager.AppSettings["twilio-account-auth-token"];
             var baseUrl = ConfigurationManager.AppSettings["base-url"];
+            var from = ConfigurationManager.AppSettings["twilio-from-number"];
+            var to = ConfigurationManager.AppSettings["twilio-to-number"];
 
             TwilioClient.Init(accountSid, authToken);
 
-            MessageResource.Create(
-                                   from: new PhoneNumber(ConfigurationManager.AppSettings["twilio-from-number"]),
-                                   to: new PhoneNumber(ConfigurationManager.AppSettings["twilio-to-number"]),
+            MessageResource.Create(from: new PhoneNumber(from),
+                                   to: new PhoneNumber(to),
                                    body:
-                                   $"Someone uploaded an non appropriated image to your site. The image url Id is {request.BlobRef} and the url is {baseUrl + request.ImageUrl}");
+        $@"Someone uploaded an non appropriated image to your site.
+        The image url Id is {request.BlobRef},
+        url is {baseUrl + request.ImageUrl}");
 
             log.Info("(Fun5) SMS sent.");
         }

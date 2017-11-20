@@ -35,13 +35,15 @@ namespace Web1.Features.AsciiArt
 
         private void OnImageCreated(object sender, ContentEventArgs args)
         {
-            if(!(args.Content is ImageData img))
+            if (!(args.Content is ImageData img))
                 return;
 
             using (var stream = img.BinaryData.OpenRead())
             {
                 var bytes = stream.ReadAllBytes();
-                _uploader.Upload(img.ContentGuid.ToString(), bytes, _urlHelper.ContentUrl(img.ContentLink));
+                _uploader.Upload(img.ContentGuid.ToString(),
+                                 bytes,
+                                 _urlHelper.ContentUrl(img.ContentLink));
             }
         }
     }
