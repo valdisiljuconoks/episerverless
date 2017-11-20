@@ -1,17 +1,17 @@
-﻿using System.Text;
+using System.Text;
 using EPiServer.PlugIn;
 using EPiServer.Scheduler;
 
-namespace Web1.Features.AsciiArt.Retrieval
+namespace Web1.Features.AsciiArt.Download
 {
     [ScheduledPlugIn(DisplayName = "Download AsciiArt Images")]
-    public class DownloadAsciiArtImages : ScheduledJobBase
+    public class DownloadAsciiArtImagesJob : ScheduledJobBase
     {
-        private readonly IAsciiResponseRetriever _retriever;
+        private readonly IAsciiResponseDownloader _downloader;
 
-        public DownloadAsciiArtImages(IAsciiResponseRetriever retriever)
+        public DownloadAsciiArtImagesJob(IAsciiResponseDownloader downloader)
         {
-            _retriever = retriever;
+            _downloader = downloader;
         }
 
         public override string Execute()
@@ -20,7 +20,7 @@ namespace Web1.Features.AsciiArt.Retrieval
 
             var log = new StringBuilder();
 
-            _retriever.Pump(log);
+            _downloader.Download(log);
 
             return log.ToString();
         }

@@ -6,6 +6,8 @@ using EPiServer.Web.Mvc;
 using EPiServer.Web.Mvc.Html;
 using Web1.Business.Rendering;
 using Web1.Features.AsciiArt;
+using Web1.Features.AsciiArt.Download;
+using Web1.Features.AsciiArt.Upload;
 
 namespace Web1.Business.Initialization
 {
@@ -19,8 +21,8 @@ namespace Web1.Business.Initialization
                 context.Services
                     .AddTransient<IContentRenderer, ErrorHandlingContentRenderer>()
                     .AddTransient<ContentAreaRenderer, AlloyContentAreaRenderer>()
-                    .AddTransient<IAsciiArtRequester, AsciiArtRequester>()
-                    .AddTransient<IAsciiResponseRetriever, CloudQueueAsciiResponseRetriever>()
+                    .AddTransient<IAsciiArtUploader, AsciiArtUploader>()
+                    .AddTransient<IAsciiResponseDownloader, CloudQueueAsciiResponseDownloader>()
                     .AddSingleton<IAsciiArtServiceSettingsProvider, AsciiArtServiceSettingsProvider>()
                     .AddTransient<IAsciiArtImageProcessor, AsciiArtImageProcessor>();
             };

@@ -6,6 +6,7 @@ using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
 using EPiServer.Web.Mvc.Html;
 using Web1.Business;
+using Web1.Features.AsciiArt.Upload;
 using InitializationModule = EPiServer.Web.InitializationModule;
 
 namespace Web1.Features.AsciiArt
@@ -14,13 +15,13 @@ namespace Web1.Features.AsciiArt
     [ModuleDependency(typeof(InitializationModule))]
     public class EventHandlerInitModule : IInitializableModule
     {
-        private IAsciiArtRequester _uploader;
+        private IAsciiArtUploader _uploader;
         private UrlHelper _urlHelper;
 
         public void Initialize(InitializationEngine context)
         {
             var canon = ServiceLocator.Current.GetInstance<IContentEvents>();
-            _uploader = ServiceLocator.Current.GetInstance<IAsciiArtRequester>();
+            _uploader = ServiceLocator.Current.GetInstance<IAsciiArtUploader>();
             _urlHelper = ServiceLocator.Current.GetInstance<UrlHelper>();
 
             canon.CreatedContent += OnImageCreated;

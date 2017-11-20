@@ -337,14 +337,14 @@
     <Compile Include="Controllers\StartPageController.cs" />
     <Compile Include="Controllers\VideoFileController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
-    <Compile Include="Features\AsciiArt\AsciiArtImageProcessor.cs" />
-    <Compile Include="Features\AsciiArt\AsciiArtRequester.cs" />
+    <Compile Include="Features\AsciiArt\Download\AsciiArtImageProcessor.cs" />
+    <Compile Include="Features\AsciiArt\Upload\AsciiArtUploader.cs" />
     <Compile Include="Features\AsciiArt\AsciiArtServiceSettingsProvider.cs" />
-    <Compile Include="Features\AsciiArt\CloudQueueAsciiResponseRetriever.cs" />
-    <Compile Include="Features\AsciiArt\IAsciiArtImageProcessor.cs" />
-    <Compile Include="Features\AsciiArt\IAsciiArtRequester.cs" />
+    <Compile Include="Features\AsciiArt\Download\CloudQueueAsciiResponseDownloader.cs" />
+    <Compile Include="Features\AsciiArt\Download\IAsciiArtImageProcessor.cs" />
+    <Compile Include="Features\AsciiArt\Upload\IAsciiArtUploader.cs" />
     <Compile Include="Features\AsciiArt\IAsciiArtServiceSettingsProvider.cs" />
-    <Compile Include="Features\AsciiArt\IAsciiResponseRetriever.cs" />
+    <Compile Include="Features\AsciiArt\Download\IAsciiResponseDownloader.cs" />
     <Compile Include="FilterConfig.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -392,7 +392,7 @@
     <Compile Include="Models\ViewModels\SearchContentModel.cs" />
     <Compile Include="Models\ViewModels\VideoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Features\AsciiArt\Retrieval\DownloadAsciiArtImages.cs" />
+    <Compile Include="Features\AsciiArt\Download\DownloadAsciiArtImagesJob.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -533,7 +533,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\AsciiArt\Submit\" />
     <Folder Include="ScheduledJobs\" />
   </ItemGroup>
   <ProjectExtensions>

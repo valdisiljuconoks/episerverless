@@ -9,9 +9,9 @@ using Shared.Models;
 using Web1.Business;
 using Web1.Models.Media;
 
-namespace Web1.Features.AsciiArt
+namespace Web1.Features.AsciiArt.Download
 {
-    class AsciiArtImageProcessor : IAsciiArtImageProcessor
+    internal class AsciiArtImageProcessor : IAsciiArtImageProcessor
     {
         private readonly IContentRepository _repository;
 

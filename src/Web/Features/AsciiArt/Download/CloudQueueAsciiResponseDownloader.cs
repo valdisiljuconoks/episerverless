@@ -4,14 +4,14 @@ using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json;
 using Shared.Models;
 
-namespace Web1.Features.AsciiArt
+namespace Web1.Features.AsciiArt.Download
 {
-    class CloudQueueAsciiResponseRetriever : IAsciiResponseRetriever
+    internal class CloudQueueAsciiResponseDownloader : IAsciiResponseDownloader
     {
         private readonly IAsciiArtImageProcessor _processor;
         private readonly IAsciiArtServiceSettingsProvider _settingsProvider;
 
-        public CloudQueueAsciiResponseRetriever(
+        public CloudQueueAsciiResponseDownloader(
             IAsciiArtServiceSettingsProvider settingsProvider,
             IAsciiArtImageProcessor processor)
         {
@@ -19,7 +19,7 @@ namespace Web1.Features.AsciiArt
             _processor = processor;
         }
 
-        public void Pump(StringBuilder log)
+        public void Download(StringBuilder log)
         {
             var settings = _settingsProvider.Settings;
             var account = CloudStorageAccount.Parse(settings.StorageUrl);
@@ -27,7 +27,7 @@ namespace Web1.Features.AsciiArt
             var queue = queueClient.GetQueueReference(settings.DoneQueueName);
 
             var draftMsg = queue.GetMessage();
-            if(draftMsg == null)
+            if (draftMsg == null)
             {
                 log.AppendLine("No messages found in the queue");
                 return;
