@@ -61,6 +61,8 @@ namespace FunctionApp
                             log.Warning("(Fun4) Inappropriate content detected. Sending notification...");
                             return request.AsQueueItem();
                         }
+
+                        log.Warning("(Fun4) Image approved (no sensitive content).");
                     }
                 }
             }
