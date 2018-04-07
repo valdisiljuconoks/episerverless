@@ -26,10 +26,7 @@ namespace FunctionApp
             {
                 From = from,
                 To = to,
-                Body = $@"Someone uploaded an non appropriated image to your site.
-        The image url Id is {request.BlobRef},
-        url is {baseUrl + request.ImageUrl}"
-
+                Body = $@"Someone uploaded an non appropriated image to your site. Image url: {baseUrl + request.ImageUrl}"
             };
         }
     }
