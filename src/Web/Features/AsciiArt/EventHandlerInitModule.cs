@@ -20,7 +20,8 @@ namespace Web1.Features.AsciiArt
 
         public void Initialize(InitializationEngine context)
         {
-            var canon = ServiceLocator.Current.GetInstance<IContentEvents>();
+            var canon = context.Locate.Advanced.GetInstance<IContentEvents>();
+
             _uploader = ServiceLocator.Current.GetInstance<IAsciiArtUploader>();
             _urlHelper = ServiceLocator.Current.GetInstance<UrlHelper>();
 

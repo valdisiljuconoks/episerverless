@@ -24,9 +24,7 @@ namespace FunctionApp
 
             AsyncHelper.RunSync(async () =>
             {
-                await outBlob.UploadFromByteArrayAsync(request.Content,
-                                                       0,
-                                                       request.Content.Length);
+                await outBlob.UploadFromByteArrayAsync(request.Content, 0, request.Content.Length);
             });
 
             var analysisRequest = new AnalysisReq
@@ -37,7 +35,6 @@ namespace FunctionApp
             };
 
             topicMessage = new BrokeredMessage(analysisRequest);
-
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(outBlob.Name)
