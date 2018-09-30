@@ -2,9 +2,10 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.ProjectOxford.Vision;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Shared.Models;
@@ -26,18 +27,24 @@ namespace FunctionApp
 
             var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-key"];
             var serviceUri = ConfigurationManager.AppSettings["cognitive-services-uri"];
-            var client = new VisionServiceClient(subscriptionKey, serviceUri);
 
-            var result = await client.AnalyzeImageAsync(inBlob,
-                                                        new[]
-                                                        {
-                                                            VisualFeature.Categories,
-                                                            VisualFeature.Color,
-                                                            VisualFeature.Description,
-                                                            VisualFeature.Faces,
-                                                            VisualFeature.ImageType,
-                                                            VisualFeature.Tags
-                                                        });
+            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(subscriptionKey))
+                                 {
+                                     Endpoint = serviceUri
+                                 };
+
+            //var client = new VisionServiceClient(subscriptionKey, serviceUri);
+
+            var result = await client.AnalyzeImageInStreamAsync(inBlob,
+                                                                new[]
+                                                                {
+                                                                    VisualFeatureTypes.Categories,
+                                                                    VisualFeatureTypes.Color,
+                                                                    VisualFeatureTypes.Description,
+                                                                    VisualFeatureTypes.Faces,
+                                                                    VisualFeatureTypes.ImageType,
+                                                                    VisualFeatureTypes.Tags
+                                                                });
 
             var asciiArtRequest = new AsciiArtRequest
                                   {
