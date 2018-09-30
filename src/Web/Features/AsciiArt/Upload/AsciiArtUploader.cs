@@ -36,9 +36,8 @@ namespace Web1.Features.AsciiArt.Upload
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var response = await
-                    Global.HttpClient.Value.PostAsync(
-                        _settings.Settings.RequestFunctionUri,
-                        content).ConfigureAwait(false);
+                    Global.HttpClient.Value.PostAsync(_settings.Settings.RequestFunctionUri,
+                                                      content).ConfigureAwait(false);
 
                 return await response.Content.ReadAsStringAsync()
                                              .ConfigureAwait(false);
