@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -22,10 +23,8 @@ namespace FunctionApp
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] ProcessingRequest request,
                                                                 HttpRequestMessage req,
             [Blob("%input-container%/{FileId}")]                CloudBlockBlob outBlob,
-            [OrchestrationClient]                               DurableOrchestrationClientBase starter,
+            [OrchestrationClient]                               DurableOrchestrationClient starter,
                                                                 TraceWriter log)
-
-            //[ServiceBus("mytopic", AccessRights.Manage)]        out BrokeredMessage topicMessage)
         {
             log.Info("(Fun1) Received image for processing...");
 
@@ -37,44 +36,35 @@ namespace FunctionApp
                 ImageUrl = request.ImageUrl
             };
 
-
             var instanceId = await starter.StartNewAsync("ProcessingSequence", analysisRequest);
             var result = starter.CreateCheckStatusResponse(req, instanceId);
 
-            //result.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(10));
-
             return result;
-
-            //topicMessage = new BrokeredMessage(analysisRequest);
-            //return new HttpResponseMessage(HttpStatusCode.OK)
-            //{
-            //    Content = new StringContent(outBlob.Name)
-            //};
         }
     }
-
 
     public static class ProcessingSequence
     {
         [FunctionName("ProcessingSequence")]
-        public static async Task<List<string>> Run([OrchestrationTrigger] DurableOrchestrationContextBase context)
+        [StorageAccount("my-storage-connection")]
+        [return: Queue("done-images")]
+        public static async Task<AsciiArtResult> Run(
+            [OrchestrationTrigger]      DurableOrchestrationContext context,
+                                        TraceWriter log)
         {
-
             var input = context.GetInput<AnalysisReq>();
 
-            var outputs = new List<string>();
+            var visionResult = await context.CallActivityAsync<(string Description, string[] Tags)>("Function2", input);
+            var asciiResult = await context.CallActivityAsync<AsciiArtResult>("Function3", input);
 
-            outputs.Add(await context.CallActivityAsync<string>("E1_SayHello", "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>("E1_SayHello", "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>("E1_SayHello", "London"));
+            var result = new AsciiArtResult(asciiResult.BlobRef,
+                                            ConfigurationManager.AppSettings["output-container"],
+                                            visionResult.Description,
+                                            visionResult.Tags);
 
-            return outputs;
-        }
+            log.Info("(ProcessingSequence) Finished processing the image.");
 
-        [FunctionName("E1_SayHello")]
-        public static string SayHello([ActivityTrigger] string name)
-        {
-            return $"Hello {name}!";
+            return result;
         }
     }
 }

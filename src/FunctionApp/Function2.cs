@@ -1,64 +1,51 @@
-//using System.Configuration;
-//using System.IO;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.Azure.WebJobs;
-//using Microsoft.Azure.WebJobs.Host;
-//using Microsoft.ProjectOxford.Vision;
-//using Microsoft.ServiceBus.Messaging;
-//using Microsoft.WindowsAzure.Storage.Queue;
-//using Shared.Models;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Shared.Models;
 
-//namespace FunctionApp
-//{
-//    [StorageAccount("my-storage-connection")]
-//    [ServiceBusAccount("my-servicebus-connection")]
-//    public static class Function2
-//    {
-//        [FunctionName("Function2")]
-//        [return: Queue("done-images")]
+namespace FunctionApp
+{
+    public static class Function2
+    {
+        [FunctionName("Function2")]
+        public static async Task<(string Description, string[] Tags)> Run(
+            [ActivityTrigger]                                      AnalysisReq request,
+                                                                   TraceWriter log)
+        {
+            log.Info("(Fun2) Running image analysis...");
+            var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-key"];
+            var serviceUri = ConfigurationManager.AppSettings["cognitive-services-uri"];
 
-//        //[return: Queue("to-ascii-conversion")]
-//        public static async Task<CloudQueueMessage> Run(
-//            [ServiceBusTrigger("mytopic", "to-ascii", AccessRights.Manage)]        AnalysisReq request,
-//            [Blob("%input-container%/{BlobRef}", FileAccess.Read)]                 Stream inBlob,
-//            //[OrchestrationClient]                                                  DurableOrchestrationClientBase starter,
-//                                                                                   DurableOrchestrationContext ctx,
-//                                                                                   TraceWriter log)
-//        {
-//            log.Info("(Fun2) Running image analysis...");
+            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(subscriptionKey))
+                         {
+                             Endpoint = serviceUri
+                         };
 
-//            var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-key"];
-//            var serviceUri = ConfigurationManager.AppSettings["cognitive-services-uri"];
-//            var client = new VisionServiceClient(subscriptionKey, serviceUri);
+            var storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["my-storage-connection"]);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var blobContainer = blobClient.GetContainerReference(ConfigurationManager.AppSettings["input-container"]);
+            var inBlob = blobContainer.GetBlockBlobReference($"{request.BlobRef}").GetByteArrayFromCloudBlockBlob();
 
-//            var result = await client.AnalyzeImageAsync(inBlob,
-//                                                        new[]
-//                                                        {
-//                                                            VisualFeature.Categories,
-//                                                            VisualFeature.Color,
-//                                                            VisualFeature.Description,
-//                                                            VisualFeature.Faces,
-//                                                            VisualFeature.ImageType,
-//                                                            VisualFeature.Tags
-//                                                        });
+            var result = await client.AnalyzeImageInStreamAsync(inBlob,
+                                                                new[]
+                                                                {
+                                                                    VisualFeatureTypes.Categories,
+                                                                    VisualFeatureTypes.Color,
+                                                                    VisualFeatureTypes.Description,
+                                                                    VisualFeatureTypes.Faces,
+                                                                    VisualFeatureTypes.ImageType,
+                                                                    VisualFeatureTypes.Tags
+                                                                });
 
-//            var asciiArtRequest = new AsciiArtRequest
-//                                  {
-//                                      BlobRef = request.BlobRef,
-//                                      Width = request.Width,
-//                                      Description = string.Join(",", result.Description.Captions.Select(c => c.Text)),
-//                                      Tags = result.Tags.Select(t => t.Name).ToArray()
-//                                  };
+            log.Info("(Fun2) Finished image analysis.");
 
-//            //var instanceId = await starter.StartNewAsync("Function3", asciiArtRequest);
-//            //starter.
-
-//            var result22 = await ctx.CallActivityAsync<AsciiArtResult>("Function3", asciiArtRequest);
-
-//            log.Info("(Fun2) Finished image analysis.");
-
-//            return result22.AsQueueItem();
-//        }
-//    }
-//}
+            return (string.Join(",", result.Description.Captions.Select(c => c.Text)),
+                    result.Tags.Select(t => t.Name).ToArray());
+        }
+    }
+}
