@@ -33,8 +33,6 @@ namespace FunctionApp
                                      Endpoint = serviceUri
                                  };
 
-            //var client = new VisionServiceClient(subscriptionKey, serviceUri);
-
             var result = await client.AnalyzeImageInStreamAsync(inBlob,
                                                                 new[]
                                                                 {

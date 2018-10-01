@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json;
 using Shared.Models;
 
 namespace FunctionApp
@@ -28,43 +27,27 @@ namespace FunctionApp
 
             try
             {
-                var subscriptionKey =
-                    ConfigurationManager.AppSettings["cognitive-services-approval-key"];
+                var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-key"];
+                var serviceUri = ConfigurationManager.AppSettings["cognitive-services-uri"];
 
-                var client = new HttpClient();
+                var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(subscriptionKey))
+                             {
+                                 Endpoint = serviceUri
+                             };
 
-                // Request headers
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+                var result = await client.AnalyzeImageInStreamAsync(inBlob,
+                                                                    new[]
+                                                                    {
+                                                                        VisualFeatureTypes.Adult
+                                                                    });
 
-                // Request parameters
-                var uri = ConfigurationManager.AppSettings["cognitive-services-approval-uri"];
-
-                using (var ms = new MemoryStream())
+                if(result.Adult.IsAdultContent)
                 {
-                    inBlob.CopyTo(ms);
-                    var byteArray = ms.ToArray();
-                    Task<string> result;
-
-                    using (var content = new ByteArrayContent(byteArray))
-                    {
-                        content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-                        var response = await client.PostAsync(uri, content);
-                        result = response.Content.ReadAsStringAsync();
-                    }
-
-                    if(result.Result != null)
-                    {
-                        var resultAsObject = JsonConvert.DeserializeObject<ContentModeratorResult>(result.Result);
-
-                        if(resultAsObject.IsImageAdultClassified)
-                        {
-                            log.Warning("(Fun4) Inappropriate content detected. Sending notification...");
-                            return request.AsQueueItem();
-                        }
-
-                        log.Warning("(Fun4) Image approved (no sensitive content).");
-                    }
+                    log.Warning("(Fun4) Unappropriated content detected. Sending notification...");
+                    return request.AsQueueItem();
                 }
+
+                log.Info("(Fun4) Image approved (no sensitive content).");
             }
             catch (Exception e)
             {
