@@ -14,12 +14,12 @@ namespace FunctionApp
 {
     public static class Function3
     {
-        [FunctionName("Function3")]
+        [FunctionName(nameof(Function3))]
         public static async Task<AsciiArtResult> Run(
             [ActivityTrigger]                                            AsciiArtRequest request,
                                                                          TraceWriter log)
         {
-            log.Info("(Fun3) Starting to convert image to ASCII art...");
+            log.Info($"({nameof(Function3)}) Starting to convert image to ASCII art...");
 
             var storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["my-storage-connection"]);
             var blobClient = storageAccount.CreateCloudBlobClient();
@@ -38,7 +38,7 @@ namespace FunctionApp
                                             request.Description,
                                             request.Tags);
 
-            log.Info("(Fun3) Finished converting image.");
+            log.Info($"({nameof(Function3)}) Finished converting image.");
 
             return result;
         }

@@ -12,12 +12,12 @@ namespace FunctionApp
 {
     public static class Function2
     {
-        [FunctionName("Function2")]
+        [FunctionName(nameof(Function2))]
         public static async Task<(string Description, string[] Tags)> Run(
             [ActivityTrigger]                                      AnalysisReq request,
                                                                    TraceWriter log)
         {
-            log.Info("(Fun2) Running image analysis...");
+            log.Info($"({nameof(Function2)}) Running image analysis...");
             var subscriptionKey = ConfigurationManager.AppSettings["cognitive-services-key"];
             var serviceUri = ConfigurationManager.AppSettings["cognitive-services-uri"];
 
@@ -42,7 +42,7 @@ namespace FunctionApp
                                                                     VisualFeatureTypes.Tags
                                                                 });
 
-            log.Info("(Fun2) Finished image analysis.");
+            log.Info($"({nameof(Function2)}) Finished image analysis.");
 
             return (string.Join(",", result.Description.Captions.Select(c => c.Text)),
                     result.Tags.Select(t => t.Name).ToArray());
