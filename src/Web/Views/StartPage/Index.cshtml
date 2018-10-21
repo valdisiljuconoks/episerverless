@@ -1,3 +1,5 @@
+@using EPiServer.Cms.Shell.UI.UIDescriptors.ViewConfigurations.Internal
+@using EPiServer.Editor
 @using Web1.Business
 @using Web1.Models.Media
 @model PageViewModel<Web1.Models.Pages.StartPage>
@@ -21,7 +23,7 @@
     </div>
 
     <div class="code">
-        @(!string.IsNullOrEmpty(image.AsciiArt) ? Html.Raw(image.AsciiArt) : Html.PropertyFor(m => m.CurrentPage.LandingImage))
+        @(PageEditing.PageIsInEditMode ? Html.PropertyFor(m => m.CurrentPage.LandingImage) : !string.IsNullOrEmpty(image.AsciiArt) ? Html.Raw(image.AsciiArt) : Html.PropertyFor(m => m.CurrentPage.LandingImage))
     </div>
 
     @if(!string.IsNullOrEmpty(image.Description))
