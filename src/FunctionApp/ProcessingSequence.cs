@@ -20,16 +20,14 @@ namespace FunctionApp
             var visionResult = await context.CallActivityAsync<(string Description, string[] Tags)>(nameof(Function2), input);
             var asciiResult = await context.CallActivityAsync<AsciiArtResult>(nameof(Function3), input);
 
+            var adultContentResult = await context.CallActivityAsync<bool>(nameof(Function4), input);
+            if(adultContentResult)
+                await context.CallActivityAsync<TwilioSmsAttribute>(nameof(Function5), input);
+
             var result = new AsciiArtResult(asciiResult.BlobRef,
                                             ConfigurationManager.AppSettings["output-container"],
                                             visionResult.Description,
                                             visionResult.Tags);
-
-            var adultContentResult = await context.CallActivityAsync<bool>(nameof(Function4), input);
-            if(adultContentResult)
-            {
-                await context.CallActivityAsync<TwilioSmsAttribute>(nameof(Function5), input);
-            }
 
             log.Info($"({nameof(ProcessingSequence)}) Finished processing the image.");
 
