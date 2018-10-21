@@ -26,7 +26,7 @@ namespace FunctionApp
             {
                 From = from,
                 To = to,
-                Body = $@"Someone uploaded an unappropriated image to your site. Image url: {baseUrl + request.ImageUrl}"
+                Body = @"Psst! Hey, Content Hero! Someone just uploaded an unappropriated image to your site. It's up to upi to figure it out! :)"
             };
         }
     }
