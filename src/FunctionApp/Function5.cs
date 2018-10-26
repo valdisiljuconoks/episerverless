@@ -26,7 +26,7 @@ namespace FunctionApp
             {
                 From = from,
                 To = to,
-                Body = @"Psst! Hey, Content Hero! Someone just uploaded an unappropriated image to your site. It's up to you to figure it out! :)"
+                Body = @"Psst!! Hey, Content Hero! Someone just uploaded an unappropriated picture to your site. It's up to you now to figure it out which image! :)"
             };
         }
     }
